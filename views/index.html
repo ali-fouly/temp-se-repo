@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="airlinesApp">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Croatia Arlines</title>
+    <link rel='stylesheet' href='../bower_components/bootstrap/dist/css/bootstrap.min.css'>
+    <script type="text/javascript" src="../bower_components/angular/angular.min.js"></script>
+    <script type="text/javascript" src="../bower_components/angular-ui-router/release/angular-ui-router.min.js"></script>
+    <script type="text/javascript" src="../javascripts/angularApp.js"></script>
+</head>
+<body>
+
+
+    <div class="container">
+        <div class="page-header">
+            <h1>Croatia Airlines</h1>
+        </div>
+        <ui-view></ui-view>
+    </div>
+
+    <script type="text/javascript" src="../bower_components/jquery/dist/jquery.min.js"></script>
+    <script type="text/javascript" src="../bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+
+
+<script type="text/ng-template" id="/home.html">
+
+
+    <div class="row">
+        <div class="alert alert-info" ng-show="searchTerm">
+            <p>You searched for "{{searchTerm.origin}}" as the origin and "{{searchTerm.destination}}" as the destination.</p>
+        </div>
+
+        <p class="text-danger" ng-show="searchTerm && !flights.length && (searchTerm && !flights.outgoing) && (searchTerm &&!flights.outgoing) ">No records found!</p>
+
+        <div class="col-sm-4" ng-show="!flights.outgoing && !flights.returning">
+            <div class="panel panel-default" ng-repeat="flight in flights">
+                <div class="panel-heading">
+                    <h3 class="panel-title"><a href="#/flights/{{flight._id}}">Flight Number: {{flight.flight_number}}</a></h3>
+                </div>
+                <div class="panel-body">
+                    <p>Origin: {{flight.origin}}</p>
+                    <p>Destination: {{flight.destination}}</p>
+                </div>
+            </div>
+        </div>
+
+        <div ng-show="flights.outgoing && flights.returning">
+            <div class="col-sm-4">
+                <h3>Departure Flights</h3>
+                <div class="panel panel-default" ng-repeat="flight in flights.outgoing">
+                    <div class="panel-heading">
+                        <h3 class="panel-title"><a href="#/flights/{{flight._id}}">Flight Number: {{flight.flight_number}}</a></h3>
+                    </div>
+                    <div class="panel-body">
+                        <p>Origin: {{flight.origin}}</p>
+                        <p>Destination: {{flight.destination}}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <h3>Returning Flights</h3>
+                <div class="panel panel-default" ng-repeat="flight in flights.returning">
+                    <div class="panel-heading">
+                        <h3 class="panel-title"><a href="#/flights/{{flight._id}}">Flight Number: {{flight.flight_number}}</a></h3>
+                    </div>
+                    <div class="panel-body">
+                        <p>Origin: {{flight.origin}}</p>
+                        <p>Destination: {{flight.destination}}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-3 pull-right">
+            <form name="searchForm" class="form-horizontal" ng-submit="search(flight)" novalidate>
+                <div class="form-group">
+                    <label>Type</label>
+                    <input type="radio" ng-model="searchType" value="1"> One Way
+                    <input type="radio" ng-model="searchType" value="2"> Two Way
+                </div>
+
+                <div class="form-group">
+                    <label for="origin">Origin</label>
+                    <input type="text" id="origin" class="form-control" ng-model="flight.origin" required>
+                </div>
+                <div class="form-group">
+                    <label for="destination">Destination</label>
+                    <input type="text" id="destination" class="form-control" ng-model="flight.destination" required>
+                </div>
+                <div class="form-group">
+                    <label for="ddate">Departure date</label>
+                    <input type="date" id="ddate" class="form-control" ng-model="flight.departureDate" required>
+                </div>
+                <div class="form-group" ng-show="searchType === '2'">
+                    <label for="rdate">Returning date</label>
+                    <input type="date" id="rdate" class="form-control" ng-model="flight.returningDate" required>
+                </div>
+                <div class="form-group">
+                    <label>Class</label>
+                    <select ng-model="flight.flightClass" class="form-control">
+                        <option value="" disabled>Select Class</option>
+                        <option value="first">First Class</option>
+                        <option value="business">Business Class</option>
+                        <option value="economy">Economy Class</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-md btn-success">Search</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+</script>
+
+<!--Show flight -->
+    <script type="text/ng-template" id="/flight.html">
+        <div class="row" >
+            <div class="col-sm-6">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Flight Number: {{flight.flight_number}}</h3>
+                    </div>
+                    <div class="panel-body">
+                        <p>Origin: {{flight.origin}}</p>
+                        <p>Destination: {{flight.destination}}</p>
+                        <p>Aircraft: {{flight.aircraft}}</p>
+                        <p>Departure date: {{flight.date | date}}</p>
+                        <p>Time: {{flight.time}}</p>
+                        <p>Available Classes: <ul><li ng-show="flight.available_seats[0].available_first > 0 ">First</li><li ng-show="flight.available_seats[0].available_business > 0 ">Business</li><li ng-show="flight.available_seats[0].available_economy > 0 ">Economy</li></ul></p>
+                        <p>Duration: {{flight.duration}}</p>
+                        <p>Price: <ul><li ng-show="flight.available_seats[0].available_first > 0 ">First Class: {{flight.price[0].price_first | currency}}</li><li ng-show="flight.available_seats[0].available_business > 0 ">Business Class: {{flight.price[0].price_business | currency}}</li><li ng-show="flight.available_seats[0].available_economy > 0 ">Economy Class: {{flight.price[0].price_economy | currency}}</li></ul></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-4 pull-right">
+            <form name="userInfoForm" class="form-horizontal" ng-submit="buy()" novalidate>
+
+                <div class="form-group">
+                    <label for="fname">First name</label>
+                    <input type="text" id="fname" class="form-control"required>
+                </div>
+                <div class="form-group">
+                    <label for="lname">Last name</label>
+                    <input type="text" id="lname" class="form-control"required>
+                </div>
+                <div class="form-group">
+                    <label for="uEmail">E-mail</label>
+                    <input type="text" id="uEmail" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for "uCountry">Country</label>
+                    <input type="text" id="uCountry" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="uAddress">Address</label>
+                    <input type="text" id="uAddress" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="uPhoneNumber">Phone number</label>
+                    <input type="text" id="uPhoneNumber" class="form-control" required>
+                </div>
+                
+                <div class="form-group">
+                    <button type="submit" class="btn btn-md btn-success">Buy Ticket</button>
+                </div>
+            </form>
+        </div>
+
+        </div>
+
+    </script>
+
+<!-- list tickets in seperate page for testing-->
+
+<script type="text/ng-template" id="/tickets.html">
+TICKETSSSSS
+<div ng-repeat="ticket in tickets">
+ {{ticket}} sdadasd
+</div>
+
+</script>
+
+
+</body>
+</html>

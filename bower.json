@@ -1,0 +1,22 @@
+{
+  "name": "CroatiaAirlines",
+  "description": "",
+  "directory": "./public/",
+  "authors": [
+    "Alymosul <alymosul@gmail.com>"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/secourse2016/1065-c",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular-ui-router": "^0.2.18",
+    "bootstrap": "^3.3.6"
+  }
+}
